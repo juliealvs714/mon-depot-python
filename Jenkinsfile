@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "juliealvs/monapp-python"
+        IMAGE_NAME = "juliealvs71/monapp-python"
         DOCKER_CREDENTIALS = "dockerhub-creds"
     }
 
