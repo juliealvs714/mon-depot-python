@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = 'monapp-python'
+        IMAGE_NAME = "juliealvs/monapp-python"
+        DOCKER_CREDENTIALS = "dockerhub-creds"
     }
 
     stages {
@@ -12,24 +13,20 @@ pipeline {
             }
         }
 
-        stage('Exécuter les tests unitaires') {
+        stage('Build image Docker') {
             steps {
-                sh '''
-                echo "Lancement des tests..."
-                python3 -m unittest discover tests || echo "Tests échoués ou absents"
-                '''
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Build de l’image Docker') {
+        stage('Push vers Docker Hub') {
             steps {
-                sh 'docker build -t $APP_NAME .'
-            }
-        }
-
-        stage('Déploiement (fictif)') {
-            steps {
-                sh 'echo "Déploiement sur serveur de test en cours..."'
+                withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push $IMAGE_NAME
+                    '''
+                }
             }
         }
     }
