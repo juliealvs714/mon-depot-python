@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Cloner le dépôt') {
             steps {
-                git 'https://github.com/juliealvs714/mon-depot-python.git'
+                git branch: 'main', url: 'https://github.com/juliealvs714/mon-depot-python.git'
             }
         }
 
